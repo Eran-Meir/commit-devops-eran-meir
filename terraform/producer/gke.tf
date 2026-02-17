@@ -2,6 +2,9 @@ resource "google_container_cluster" "primary" {
   name     = "commit-cluster-producer"
   location = "me-west1-a"  # Zonal cluster is cheaper than Regional
 
+  # Turn off the safety lock
+  deletion_protection = false
+
   # We want a clean network, so we delete the default node pool immediately
   remove_default_node_pool = true
   initial_node_count       = 1
@@ -31,7 +34,7 @@ resource "google_container_node_pool" "primary_nodes" {
   node_count = 1  # Minimum nodes to run the app
 
   node_config {
-    preemptible  = true  # Spot instances! Saves ~70% cost
+    preemptible = true  # Spot instances! Saves ~70% cost
     machine_type = "e2-medium"
 
     # Minimal scopes for security
