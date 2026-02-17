@@ -65,4 +65,7 @@ resource "google_compute_service_attachment" "producer_service_attachment" {
 
   # The explicit PSC subnet we created in vpc.tf is used here for NAT
   nat_subnets           = [google_compute_subnetwork.psc_subnet.id]
+
+  # Explicitly disable Proxy Protocol
+  enable_proxy_protocol = false
 }
