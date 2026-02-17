@@ -1,0 +1,64 @@
+name: 🟢 Deploy Infrastructure
+
+on:
+  workflow_dispatch:  # Manual Trigger
+
+env:
+  TF_VERSION: 1.5.7
+  Start_Fresh: "false" # Change to true to destroy before apply (optional)
+
+jobs:
+  # 1. DEPLOY PRODUCER (Project B - The App)
+  deploy-producer:
+    name: Deploy Producer (GKE)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Auth to GCP
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init & Apply (Producer)
+        working-directory: ./terraform/producer
+        run: |
+          terraform init
+          terraform apply -auto-approve
+
+  # 2. DEPLOY CONSUMER (Project A - The Edge)
+  # This runs ONLY after Producer succeeds
+  deploy-consumer:
+    name: Deploy Consumer (LB)
+    needs: deploy-producer
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Auth to GCP
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init & Apply (Consumer)
+        working-directory: ./terraform/consumer
+        run: |
+          terraform init
+          terraform apply -auto-approve
