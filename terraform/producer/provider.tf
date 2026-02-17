@@ -3,7 +3,7 @@ terraform {
 
   backend "gcs" {
     bucket  = "commit-tf-state-eran-meir"
-    prefix  = "terraform/consumer"
+    prefix  = "terraform/producer"
   }
 
   required_providers {
