@@ -2,8 +2,8 @@ terraform {
   required_version = ">= 1.0"
 
   backend "gcs" {
-    bucket  = "commit-tf-state-eran-meir"  # Your new bucket
-    prefix  = "terraform/producer"         # Keeps this state separate
+    bucket  = "commit-tf-state-eran-meir"
+    prefix  = "terraform/consumer"
   }
 
   required_providers {
@@ -11,9 +11,10 @@ terraform {
       source  = "hashicorp/google"
       version = "~> 5.0"
     }
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = "~> 2.24"
+    # ADDED: This provider allows us to generate self-signed certs
+    tls = {
+      source  = "hashicorp/tls"
+      version = "~> 4.0"
     }
   }
 }
