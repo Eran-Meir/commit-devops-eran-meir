@@ -27,11 +27,9 @@ resource "google_compute_region_backend_service" "producer_backend" {
   load_balancing_scheme = "INTERNAL"
   health_checks         = [google_compute_region_health_check.producer_hc.id]
 
-  # DYNAMICALLY FIND THE GKE NODES
-  # We use the instance group URL directly from the GKE Node Pool resource.
-  # This is the "Pro" way to link GKE and LB in Terraform.
   backend {
-    group          = google_container_node_pool.primary_nodes.instance_group_urls[0]
+    # Point Backend Service to Instance Group instead of Manager
+    group          = replace(google_container_node_pool.primary_nodes.instance_group_urls[0], "instanceGroupManagers", "instanceGroups")
     balancing_mode = "CONNECTION"
   }
 }
