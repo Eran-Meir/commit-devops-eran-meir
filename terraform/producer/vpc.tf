@@ -31,3 +31,18 @@ resource "google_compute_subnetwork" "psc_subnet" {
   network       = google_compute_network.producer_vpc.id
   purpose       = "PRIVATE_SERVICE_CONNECT"
 }
+
+# AUTOMATE THE FIREWALL RULE
+resource "google_compute_firewall" "allow_health_checks" {
+  name    = "allow-health-checks"
+  network = google_compute_network.producer_vpc.name
+  project = "commit-gcp-psc-eran-meir"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["80"]
+  }
+
+  source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
+  direction     = "INGRESS"
+}

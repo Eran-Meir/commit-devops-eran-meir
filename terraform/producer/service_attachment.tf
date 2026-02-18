@@ -14,7 +14,7 @@ resource "google_compute_region_health_check" "producer_hc" {
   region = "me-west1"
 
   tcp_health_check {
-    port = 8080  # We will configure Nginx to listen here
+    port = 80  # We will configure Nginx to listen here
   }
 }
 

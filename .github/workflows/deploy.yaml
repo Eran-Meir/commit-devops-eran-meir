@@ -1,0 +1,29 @@
+ # 🚀 NEW JOB: SPECIFICALLY FOR APP DEPLOY
+  deploy-app:
+    name: "🚀 Deploy Application"
+    needs: [deploy-producer]  # Wait for the cluster to be ready
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Get GKE Credentials
+        uses: google-github-actions/get-gke-credentials@v1
+        with:
+          cluster_name: commit-cluster-producer
+          location: me-west1-a  # <--- ensuring we hit the correct Zone
+          project_id: commit-gcp-psc-eran-meir
+
+      - name: 🚀 Apply Kubernetes Manifests
+        run: |
+          echo "Deploying the app from app/k8s/..."
+          kubectl apply -f app/k8s/nginx.yaml
+          
+      - name: ⏳ Wait for Rollout
+        run: |
+          kubectl rollout status deployment/nginx
