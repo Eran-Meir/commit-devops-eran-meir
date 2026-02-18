@@ -46,6 +46,7 @@ resource "google_compute_forwarding_rule" "producer_forwarding_rule" {
   subnetwork            = google_compute_subnetwork.gke_subnet.id
   ip_address            = google_compute_address.ilb_ip.id
   ports = ["80"]
+  allow_global_access   = true
 }
 
 # 5. CREATE THE SERVICE ATTACHMENT (THE BRIDGE)
