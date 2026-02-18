@@ -1,14 +1,17 @@
 name: 🟢 Deploy Infrastructure
 
 on:
-  workflow_dispatch:  # Manual Trigger
+  workflow_dispatch:  # Allows the "Run workflow" button in GitHub
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'terraform/**' # Triggers if you change infrastructure code
 
 env:
   TF_VERSION: 1.5.7
-  Start_Fresh: "false" # Change to true to destroy before apply (optional)
 
 jobs:
-  # 1. DEPLOY PRODUCER (Project B - The App)
+  # 1. DEPLOY PRODUCER (GKE Cluster & Network)
   deploy-producer:
     name: Deploy Producer (GKE)
     runs-on: ubuntu-latest
@@ -36,8 +39,7 @@ jobs:
           terraform init
           terraform apply -auto-approve
 
-  # 2. DEPLOY CONSUMER (Project A - The Edge)
-  # This runs ONLY after Producer succeeds
+  # 2. DEPLOY CONSUMER (External Load Balancer)
   deploy-consumer:
     name: Deploy Consumer (LB)
     needs: deploy-producer

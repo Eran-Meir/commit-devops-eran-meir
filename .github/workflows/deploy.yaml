@@ -2,63 +2,14 @@ name: 🚀 Deploy Application
 run-name: 🚀 Deploy App | Branch:${{ github.ref_name }} | By @${{ github.actor }}
 
 on:
-  workflow_dispatch:  # This keeps your "🟢 Deploy" button active
   push:
     branches: [ "main" ]
+    paths:
+      - 'app/**' # Only runs when application code or manifests change
 
 jobs:
-  # 1. DEPLOY PRODUCER (Infrastructure)
-  deploy-producer:
-    name: Deploy Producer (GKE)
-    runs-on: ubuntu-latest
-    permissions:
-      contents: 'read'
-      id-token: 'write'
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Terraform Init
-        run: terraform -chdir=terraform/producer init
-
-      - name: Terraform Apply
-        run: terraform -chdir=terraform/producer apply -auto-approve
-
-  # 2. DEPLOY CONSUMER (Load Balancer)
-  deploy-consumer:
-    name: Deploy Consumer (LB)
-    needs: [deploy-producer]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Terraform Init
-        run: terraform -chdir=terraform/consumer init
-
-      - name: Terraform Apply
-        run: terraform -chdir=terraform/consumer apply -auto-approve
-
-  # 🚀 3. NEW JOB: SPECIFICALLY FOR APP DEPLOY
   deploy-app:
     name: "🚀 Deploy Application"
-    needs: [deploy-producer]  # Wait for the cluster to be ready
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
