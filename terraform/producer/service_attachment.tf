@@ -38,6 +38,7 @@ resource "google_compute_region_backend_service" "producer_backend" {
 # This is the actual entry point that the Service Attachment connects to.
 resource "google_compute_forwarding_rule" "producer_forwarding_rule" {
   name   = "commit-producer-forwarding-rule"
+  description = "Allow Global Access enabled"
   region = "me-west1"
 
   load_balancing_scheme = "INTERNAL"
