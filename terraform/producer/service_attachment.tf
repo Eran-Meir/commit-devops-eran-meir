@@ -42,10 +42,10 @@ resource "google_compute_forwarding_rule" "producer_forwarding_rule" {
 
   load_balancing_scheme = "INTERNAL"
   backend_service       = google_compute_region_backend_service.producer_backend.id
-  all_ports             = true
   network               = google_compute_network.producer_vpc.id
   subnetwork            = google_compute_subnetwork.gke_subnet.id
   ip_address            = google_compute_address.ilb_ip.id
+  ports = ["80"]
 }
 
 # 5. CREATE THE SERVICE ATTACHMENT (THE BRIDGE)
