@@ -46,3 +46,19 @@ resource "google_compute_firewall" "allow_health_checks" {
   source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
   direction     = "INGRESS"
 }
+
+# Allow IAP to SSH into nodes for debugging
+resource "google_compute_firewall" "allow_iap_ssh" {
+  name    = "allow-iap-ssh"
+  network = google_compute_network.producer_vpc.name
+  project = "commit-gcp-psc-eran-meir"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+
+  # This is the standard Google IAP range
+  source_ranges = ["35.235.240.0/20"]
+  direction     = "INGRESS"
+}
