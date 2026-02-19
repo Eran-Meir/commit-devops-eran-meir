@@ -2,6 +2,7 @@
 resource "google_compute_security_policy" "armor_policy" {
   name = "commit-armor-policy"
 
+  # Default rule: Allow all normal traffic
   rule {
     action   = "allow"
     priority = "2147483647"
@@ -12,6 +13,18 @@ resource "google_compute_security_policy" "armor_policy" {
       }
     }
     description = "Default allow all"
+  }
+
+  # Security rule: Block SQL Injection
+  rule {
+    action   = "deny(403)"
+    priority = "1000"
+    match {
+      expr {
+        expression = "evaluatePreconfiguredExpr('sqli-v33-stable')"
+      }
+    }
+    description = "Block SQL Injection"
   }
 }
 
