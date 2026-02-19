@@ -29,6 +29,14 @@ jobs:
           location: me-west1-a
           project_id: commit-gcp-psc-eran-meir
 
+      - name: 🔐 Generate Internal SSL Certificate
+        run: |
+          echo "Generating self-signed cert for Nginx..."
+          openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=commit-demo.internal"
+          
+          echo "Creating Kubernetes Secret..."
+          kubectl create secret tls nginx-tls-secret --key tls.key --cert tls.crt --dry-run=client -o yaml | kubectl apply -f -
+
       - name: 🚀 Apply Kubernetes Manifests
         run: |
           echo "Deploying the app from app/k8s/..."
