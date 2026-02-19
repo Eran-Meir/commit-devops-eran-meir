@@ -57,3 +57,24 @@ jobs:
         run: |
           terraform init
           terraform destroy -auto-approve
+      - name: 🔍 Verify Empty Project (Zero Billing Check)
+        if: always() # Ensures this runs even if the destroy had a minor error
+        run: |
+          echo "========================================"
+          echo "          STARTING BILLING CHECK        "
+          echo "========================================"
+          
+          echo "--- 1. Checking for Active GKE Clusters ---"
+          gcloud container clusters list --project=commit-gcp-psc-eran-meir
+          
+          echo "--- 2. Checking for Active VMs ---"
+          gcloud compute instances list --project=commit-gcp-psc-eran-meir
+          
+          echo "--- 3. Checking for Active Load Balancers (Forwarding Rules) ---"
+          gcloud compute forwarding-rules list --project=commit-gcp-psc-eran-meir
+          
+          echo "--- 4. Checking for Leaked Static IPs ---"
+          gcloud compute addresses list --project=commit-gcp-psc-eran-meir
+          
+          echo "========================================"
+          echo " If all lists above are empty, your project is safe!"
