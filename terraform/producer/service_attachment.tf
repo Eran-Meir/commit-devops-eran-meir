@@ -14,7 +14,7 @@ resource "google_compute_region_health_check" "producer_hc" {
   region = "me-west1"
 
   tcp_health_check {
-    port = 80  # We will configure Nginx to listen here
+    port = 443  # We will configure Nginx to listen here
   }
 }
 
@@ -46,7 +46,7 @@ resource "google_compute_forwarding_rule" "producer_forwarding_rule" {
   network               = google_compute_network.producer_vpc.id
   subnetwork            = google_compute_subnetwork.gke_subnet.id
   ip_address            = google_compute_address.ilb_ip.id
-  ports = ["80"]
+  ports = ["443"]
   allow_global_access   = true
 }
 
