@@ -46,7 +46,7 @@ resource "google_compute_ssl_certificate" "default" {
 resource "google_compute_backend_service" "external_backend" {
   name                  = "commit-external-backend"
   load_balancing_scheme = "EXTERNAL_MANAGED"
-  protocol              = "HTTPS"
+  protocol              = "HTTP"
   security_policy       = google_compute_security_policy.armor_policy.id
 
   backend {
