@@ -8,6 +8,11 @@ on:
     paths:
       - 'app/**' # Only runs when application code or manifests change
 
+# Guarantees GKE cluster is only ever processing the absolute latest version of the code, eliminating the race condition.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   deploy-app:
     name: "🚀 Deploy Application"
