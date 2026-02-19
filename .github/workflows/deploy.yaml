@@ -3,10 +3,6 @@ run-name: 🚀 Deploy App | Branch:${{ github.ref_name }} | By @${{ github.actor
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ "main" ]
-    paths:
-      - 'app/**' # Only runs when application code or manifests change
 
 # Guarantees GKE cluster is only ever processing the absolute latest version of the code, eliminating the race condition.
 concurrency:
