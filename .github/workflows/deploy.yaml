@@ -32,8 +32,13 @@ jobs:
       - name: 🚀 Apply Kubernetes Manifests
         run: |
           echo "Deploying the app from app/k8s/..."
-          kubectl apply -f app/k8s/nginx.yaml
-          
+          # The trailing slash tells it to apply ALL yaml files in the folder
+          kubectl apply -f app/k8s/ 
+
       - name: ⏳ Wait for Rollout
         run: |
-          kubectl rollout status deployment/nginx
+          echo "Waiting for Flask App to be ready..."
+          kubectl rollout status deployment/flask-app
+          
+          echo "Waiting for Nginx Ingress to be ready..."
+          kubectl rollout status deployment/nginx-ingress
