@@ -2,6 +2,7 @@ name: 🚀 Deploy Application
 run-name: 🚀 Deploy App | Branch:${{ github.ref_name }} | By @${{ github.actor }}
 
 on:
+  workflow_dispatch:
   push:
     branches: [ "main" ]
     paths:
