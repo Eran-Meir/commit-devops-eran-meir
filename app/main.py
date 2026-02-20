@@ -1,15 +1,12 @@
 from flask import Flask
-import os
 
 app = Flask(__name__)
 
+@app.route('/get')
 @app.route('/')
-def hello_world():
-    return 'Hello World from Comm-IT DevOps Assignment!'
-
-@app.route('/health')
-def health():
-    return 'OK', 200
+def hello():
+    return "Hello world"
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
+    # Listen on 8080 to avoid root port permission issues in the container
+    app.run(host='0.0.0.0', port=8080)

@@ -43,3 +43,11 @@ resource "google_container_node_pool" "primary_nodes" {
     ]
   }
 }
+
+resource "google_artifact_registry_repository" "app_repo" {
+  project       = "commit-gcp-psc-eran-meir"
+  location      = "me-west1"
+  repository_id = "commit-flask-app"
+  description   = "Docker repository for Flask application"
+  format        = "DOCKER"
+}

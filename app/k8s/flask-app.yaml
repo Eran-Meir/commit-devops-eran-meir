@@ -4,19 +4,22 @@ metadata:
   name: flask-app
 spec:
   replicas: 1
+  strategy:
+    type: Recreate  # Forces a fresh pull of the 'latest' tag
   selector:
     matchLabels:
-      app: flask
+      app: flask-app
   template:
     metadata:
       labels:
-        app: flask
+        app: flask-app
     spec:
       containers:
-      - name: flask
-        image: kennethreitz/httpbin  # Lightweight Python HTTP app
+      - name: flask-app
+        image: me-west1-docker.pkg.dev/commit-gcp-psc-eran-meir/commit-flask-app/flask-api:latest
+        imagePullPolicy: Always  # <--- Crucial for 'latest' tags
         ports:
-        - containerPort: 80
+        - containerPort: 8080
 ---
 apiVersion: v1
 kind: Service
@@ -24,7 +27,8 @@ metadata:
   name: flask-service
 spec:
   selector:
-    app: flask
+    app: flask-app
   ports:
-    - port: 80
-      targetPort: 80
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
