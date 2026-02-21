@@ -29,7 +29,7 @@
                       "groupByFields": [],
                       "perSeriesAligner": "ALIGN_RATE"
                     },
-                    "filter": "metric.type=\"loadbalancing.googleapis.com/https/request_count\" resource.type=\"https_lb_rule\""
+                    "filter": "metric.type=\"loadbalancing.googleapis.com/l3/internal/ingress_bytes_count\" resource.type=\"internal_tcp_lb_rule\""
                   }
                 }
               }
