@@ -24,6 +24,22 @@ The architecture completely isolates the public-facing ingestion layer from the 
 6. **Internal TLS Termination:** The traffic hits Nginx Ingress on the GKE node, which uses an internal certificate to decrypt the traffic safely inside the cluster.
 7. **Application Execution:** Nginx proxies the plaintext request to the custom Flask API pod running on port 8080, which returns the payload.
 
+## 📈 Elastic Scaling & High Availability
+
+The platform features a **Horizontal Pod Autoscaler (HPA)** designed to handle volatile traffic patterns through intensive CPU-bound workloads.
+
+### Automated Load Response:
+To demonstrate real-world elasticity, the Flask application includes a dedicated `/hpa` endpoint that performs heavy floating-point computations. 
+
+* **The Test Command:** To trigger a scale event, you can run the following loop in a terminal (Git Bash or Linux) to sustain high CPU utilization:
+  ```bash
+  while true; do curl -k -s https://<YOUR_GLOBAL_IP>/hpa & sleep 1; done
+
+### Automated Load Response:
+To demonstrate real-world elasticity, the Flask application includes a dedicated `/hpa` endpoint that performs heavy floating-point computations. 
+* **Rapid Scale-Out:** As demonstrated in the monitoring data, a sustained CPU spike triggers the HPA to scale the deployment from **1 to 5 pods in less than 60 seconds**.
+* **Aggressive Scale-Down:** To optimize cloud costs, a custom `behavior` policy is applied, forcing the cluster to scale back down to the baseline within 60 seconds of load cessation, rather than the Kubernetes default of 5 minutes.
+
 ## 📊 Observability as Code
 
 Monitoring is strictly decoupled by network boundary and managed entirely via Terraform to ensure the observability layer shares the exact lifecycle as the compute infrastructure.
@@ -32,8 +48,8 @@ Monitoring is strictly decoupled by network boundary and managed entirely via Te
 Tracks external ingress and WAF drop rates to monitor perimeter health.
 ![Edge Dashboard](images/vpc-a-dashboard.jpg)
 
-### VPC B: Compute Health
-Tracks Layer 3/Layer 4 bytes emerging from the PSC tunnel and correlates it directly to Kubernetes Pod CPU utilization.
+### VPC B: Compute Health & Scaling
+Correlates Layer 3/Layer 4 bytes emerging from the PSC tunnel directly with Kubernetes Pod CPU utilization and live Pod counts (Uptime).
 ![Compute Dashboard](images/vpc-b-dashboard.jpg)
 
 ## 🚀 GitOps Deployment Workflow
@@ -50,7 +66,7 @@ Infrastructure and Application deployments are cleanly separated in GitHub Actio
    * Authenticates to Google Cloud.
    * Builds the lightweight Flask Docker image from `app/Dockerfile`.
    * Pushes the image to Google Artifact Registry.
-   * Applies Kubernetes manifests (`nginx-ingress.yaml`, `flask-app.yaml`) to the GKE cluster.
+   * Applies Kubernetes manifests (`nginx-ingress.yaml`, `flask-app.yaml`, `hpa.yaml`) to the GKE cluster.
    
 ![Application Deployment Pipeline](images/deploy-application.jpg)
 
