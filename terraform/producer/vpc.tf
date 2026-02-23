@@ -8,7 +8,7 @@ resource "google_compute_network" "producer_vpc" {
 resource "google_compute_subnetwork" "gke_subnet" {
   name          = "commit-subnet-gke"
   ip_cidr_range = "10.10.0.0/20"  # Nodes get IPs from here
-  region        = "me-west1"
+  region        = var.region
   network       = google_compute_network.producer_vpc.id
 
   # Secondary ranges for Pods and Services (GPC Native VPC)
@@ -27,7 +27,7 @@ resource "google_compute_subnetwork" "gke_subnet" {
 resource "google_compute_subnetwork" "psc_subnet" {
   name          = "commit-subnet-psc-nat"
   ip_cidr_range = "10.2.0.0/28"
-  region        = "me-west1"
+  region        = var.region
   network       = google_compute_network.producer_vpc.id
   purpose       = "PRIVATE_SERVICE_CONNECT"
 }
@@ -36,7 +36,7 @@ resource "google_compute_subnetwork" "psc_subnet" {
 resource "google_compute_firewall" "allow_health_checks" {
   name    = "allow-health-checks"
   network = google_compute_network.producer_vpc.name
-  project = "commit-gcp-psc-eran-meir"
+  project = var.project_id
 
   allow {
     protocol = "tcp"
@@ -51,7 +51,7 @@ resource "google_compute_firewall" "allow_health_checks" {
 resource "google_compute_firewall" "allow_iap_ssh" {
   name    = "allow-iap-ssh"
   network = google_compute_network.producer_vpc.name
-  project = "commit-gcp-psc-eran-meir"
+  project = var.project_id
 
   allow {
     protocol = "tcp"

@@ -28,7 +28,7 @@ resource "google_compute_security_policy" "armor_policy" {
   }
 }
 
-# 2. GENERATE SELF-SIGNED CERTIFICATE (The Fix)
+# 2. GENERATE SELF-SIGNED CERTIFICATE
 # Create a private key
 resource "tls_private_key" "default" {
   algorithm = "RSA"

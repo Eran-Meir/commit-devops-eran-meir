@@ -1,6 +1,6 @@
 resource "google_container_cluster" "primary" {
   name     = "commit-cluster-producer"
-  location = "me-west1-a"  # Zonal cluster is cheaper than Regional
+  location = var.zone  # Zonal cluster is cheaper than Regional
 
   # Turn off the safety lock
   deletion_protection = false
@@ -29,7 +29,7 @@ resource "google_container_cluster" "primary" {
 # The actual worker nodes
 resource "google_container_node_pool" "primary_nodes" {
   name       = "commit-node-pool"
-  location   = "me-west1-a"
+  location   = var.zone
   cluster    = google_container_cluster.primary.name
   node_count = 1  # Minimum nodes to run the app
 
@@ -45,8 +45,8 @@ resource "google_container_node_pool" "primary_nodes" {
 }
 
 resource "google_artifact_registry_repository" "app_repo" {
-  project       = "commit-gcp-psc-eran-meir"
-  location      = "me-west1"
+  project       = var.project_id
+  location      = var.region
   repository_id = "commit-flask-app"
   description   = "Docker repository for Flask application"
   format        = "DOCKER"

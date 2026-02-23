@@ -52,6 +52,9 @@ jobs:
           echo "Deploying the app from app/k8s/..."
           # The trailing slash tells it to apply ALL yaml files in the folder
           kubectl apply -f app/k8s/ 
+          
+          echo "Forcing pods to restart and pull the new image..."
+          kubectl rollout restart deployment/flask-app
 
       - name: ⏳ Wait for Rollout
         run: |
@@ -60,3 +63,6 @@ jobs:
           
           echo "Waiting for Nginx Ingress to be ready..."
           kubectl rollout status deployment/nginx-ingress
+          
+          echo "Verifying Horizontal Pod Autoscaler..."
+          kubectl get hpa

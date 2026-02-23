@@ -20,6 +20,6 @@ terraform {
 }
 
 provider "google" {
-  project = "commit-gcp-psc-eran-meir"
-  region  = "me-west1"
+  project = var.project_id
+  region  = var.region
 }

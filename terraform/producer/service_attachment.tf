@@ -4,14 +4,14 @@ resource "google_compute_address" "ilb_ip" {
   name         = "commit-ilb-ip"
   subnetwork   = google_compute_subnetwork.gke_subnet.id
   address_type = "INTERNAL"
-  region       = "me-west1"
+  region       = var.region
 }
 
 # 2. DEFINE THE HEALTH CHECK
 # The Load Balancer needs to know if your Nginx Pods are alive.
 resource "google_compute_region_health_check" "producer_hc" {
   name   = "commit-producer-hc"
-  region = "me-west1"
+  region = var.region
 
   tcp_health_check {
     port = 443  # We will configure Nginx to listen here
@@ -22,7 +22,7 @@ resource "google_compute_region_health_check" "producer_hc" {
 # This defines "Where do I send the traffic?" -> To the GKE Nodes.
 resource "google_compute_region_backend_service" "producer_backend" {
   name                  = "commit-producer-backend"
-  region                = "me-west1"
+  region                = var.region
   protocol              = "TCP"
   load_balancing_scheme = "INTERNAL"
   health_checks         = [google_compute_region_health_check.producer_hc.id]
@@ -39,7 +39,7 @@ resource "google_compute_region_backend_service" "producer_backend" {
 resource "google_compute_forwarding_rule" "producer_forwarding_rule" {
   name   = "commit-producer-forwarding-rule"
   description = "Allow Global Access enabled"
-  region = "me-west1"
+  region = var.region
 
   load_balancing_scheme = "INTERNAL"
   backend_service       = google_compute_region_backend_service.producer_backend.id
@@ -54,7 +54,7 @@ resource "google_compute_forwarding_rule" "producer_forwarding_rule" {
 # This is the resource that allows Project A to connect to us via Private Service Connect.
 resource "google_compute_service_attachment" "producer_service_attachment" {
   name        = "commit-service-attachment"
-  region      = "me-west1"
+  region      = var.region
   description = "PSC Service Attachment for Comm-IT Assignment"
 
   # Establish the link to the Forwarding Rule we just created
