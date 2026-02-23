@@ -11,17 +11,24 @@
         "width": 24,
         "widget": {
           "title": "Internal Routing - traffic is successfully emerging from the PSC tunnel",
+          "id": "",
           "xyChart": {
             "chartOptions": {
               "displayHorizontal": false,
-              "mode": "COLOR"
+              "mode": "COLOR",
+              "showLegend": false
             },
             "dataSets": [
               {
+                "breakdowns": [],
+                "dimensions": [],
+                "legendTemplate": "",
+                "measures": [],
                 "minAlignmentPeriod": "60s",
                 "plotType": "LINE",
                 "targetAxis": "Y1",
                 "timeSeriesQuery": {
+                  "outputFullDuration": false,
                   "timeSeriesFilter": {
                     "aggregation": {
                       "alignmentPeriod": "60s",
@@ -30,12 +37,14 @@
                       "perSeriesAligner": "ALIGN_RATE"
                     },
                     "filter": "metric.type=\"loadbalancing.googleapis.com/l3/internal/ingress_bytes_count\" resource.type=\"internal_tcp_lb_rule\""
-                  }
+                  },
+                  "unitOverride": ""
                 }
               }
             ],
             "thresholds": [],
             "yAxis": {
+              "label": "",
               "scale": "LINEAR"
             }
           }
@@ -47,6 +56,51 @@
         "width": 24,
         "widget": {
           "title": "Kubernetes Container - CPU usage time",
+          "id": "",
+          "xyChart": {
+            "chartOptions": {
+              "displayHorizontal": false,
+              "mode": "COLOR",
+              "showLegend": false
+            },
+            "dataSets": [
+              {
+                "breakdowns": [],
+                "dimensions": [],
+                "legendTemplate": "",
+                "measures": [],
+                "minAlignmentPeriod": "60s",
+                "plotType": "LINE",
+                "targetAxis": "Y1",
+                "timeSeriesQuery": {
+                  "outputFullDuration": false,
+                  "timeSeriesFilter": {
+                    "aggregation": {
+                      "alignmentPeriod": "60s",
+                      "crossSeriesReducer": "REDUCE_SUM",
+                      "groupByFields": [],
+                      "perSeriesAligner": "ALIGN_RATE"
+                    },
+                    "filter": "metric.type=\"kubernetes.io/container/cpu/core_usage_time\" resource.type=\"k8s_container\" resource.label.\"namespace_name\"=\"default\""
+                  },
+                  "unitOverride": ""
+                }
+              }
+            ],
+            "thresholds": [],
+            "yAxis": {
+              "label": "",
+              "scale": "LINEAR"
+            }
+          }
+        }
+      },
+      {
+        "yPos": 16,
+        "height": 16,
+        "width": 24,
+        "widget": {
+          "title": "Kubernetes Container - Uptime for flask-app [COUNT]",
           "xyChart": {
             "chartOptions": {
               "displayHorizontal": false,
@@ -61,11 +115,11 @@
                   "timeSeriesFilter": {
                     "aggregation": {
                       "alignmentPeriod": "60s",
-                      "crossSeriesReducer": "REDUCE_SUM",
+                      "crossSeriesReducer": "REDUCE_COUNT",
                       "groupByFields": [],
-                      "perSeriesAligner": "ALIGN_RATE"
+                      "perSeriesAligner": "ALIGN_MEAN"
                     },
-                    "filter": "metric.type=\"kubernetes.io/container/cpu/core_usage_time\" resource.type=\"k8s_container\" resource.label.\"namespace_name\"=\"default\""
+                    "filter": "metric.type=\"kubernetes.io/container/uptime\" resource.type=\"k8s_container\" resource.label.\"container_name\"=\"flask-app\""
                   }
                 }
               }
