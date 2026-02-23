@@ -31,14 +31,11 @@ The platform features a **Horizontal Pod Autoscaler (HPA)** designed to handle v
 ### Automated Load Response:
 To demonstrate real-world elasticity, the Flask application includes a dedicated `/hpa` endpoint that performs heavy floating-point computations. 
 
+* **Rapid Scale-Out:** As demonstrated in the monitoring data, a sustained CPU spike triggers the HPA to scale the deployment from **1 to 5 pods in less than 60 seconds**.
+* **Aggressive Scale-Down:** To optimize cloud costs, a custom `behavior` policy is applied, forcing the cluster to scale back down to the baseline within 60 seconds of load cessation, rather than the Kubernetes default of 5 minutes.
 * **The Test Command:** To trigger a scale event, you can run the following loop in a terminal (Git Bash or Linux) to sustain high CPU utilization:
   ```bash
   while true; do curl -k -s https://<YOUR_GLOBAL_IP>/hpa & sleep 1; done
-
-### Automated Load Response:
-To demonstrate real-world elasticity, the Flask application includes a dedicated `/hpa` endpoint that performs heavy floating-point computations. 
-* **Rapid Scale-Out:** As demonstrated in the monitoring data, a sustained CPU spike triggers the HPA to scale the deployment from **1 to 5 pods in less than 60 seconds**.
-* **Aggressive Scale-Down:** To optimize cloud costs, a custom `behavior` policy is applied, forcing the cluster to scale back down to the baseline within 60 seconds of load cessation, rather than the Kubernetes default of 5 minutes.
 
 ## 📊 Observability as Code
 
@@ -88,3 +85,10 @@ cd terraform/consumer && terraform destroy -auto-approve
 
 # 2. Destroy Producer (Compute) 
 cd terraform/producer && terraform destroy -auto-approve
+```
+## 🔮 Future Production Enhancements
+
+While this repository provisions a cost-effective **Zonal GKE Cluster** to optimize for fast GitOps pipeline execution and minimal cloud spend, a true enterprise production rollout would expand on this foundation with the following enhancements:
+
+* **High Availability (Regional Cluster):** Upgrading the GKE control plane to a Regional cluster spanning multiple compute zones (e.g., `me-west1-a`, `me-west1-b`, `me-west1-c`) to ensure the platform can survive isolated data center outages.
+* **Elastic Compute (Cluster Autoscaler):** The current architecture demonstrates the **Horizontal Pod Autoscaler (HPA)** scaling *Pods* based on CPU utilization within a fixed physical boundary. For true elasticity, enabling the **Cluster Autoscaler (CA)** would allow GKE to dynamically provision and destroy the underlying Compute Engine VMs across multiple zones whenever the HPA requests pods that exceed the current node capacity.
