@@ -5,10 +5,7 @@ metadata:
 spec:
   replicas: 1
   strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1       # You are allowed to temporarily run 1 extra pod during the update
-      maxUnavailable: 0 # you are never allowed to let the available pods drop below 1
+    type: Recreate
   selector:
     matchLabels:
       app: flask-app
