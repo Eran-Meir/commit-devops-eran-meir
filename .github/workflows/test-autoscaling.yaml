@@ -1,0 +1,40 @@
+name: 🌪️ Test HPA Autoscaling
+
+on:
+  workflow_dispatch:
+
+jobs:
+  load-test:
+    name: Run 30-Second CPU Load
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # (Insert your standard GCP authentication step here if your Terraform remote state requires it)
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}' # Adjust this to match your other workflows
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Initialize Terraform
+        working-directory: terraform/consumer
+        run: terraform init
+
+      - name: Execute Load Test Loop
+        working-directory: terraform/consumer
+        run: |
+          # 1. Fetch the dynamic IP from Terraform state
+          export INGRESS_IP=$(terraform output -raw app_external_ip)
+          echo "Targeting Global IP: $INGRESS_IP"
+          echo "Starting 30-second aggressive load test..."
+          
+          # 2. Run the background curl loop for exactly 30 seconds using 'timeout'
+          # The '|| true' prevents the workflow from failing when the timeout kills the loop
+          timeout 30s bash -c "while true; do curl -k -s https://$INGRESS_IP/hpa & sleep 1; done" || true
+          
+          echo "Load test complete! The HPA should now be scaling the pods."
