@@ -1,4 +1,4 @@
-name: 🌪️ Test HPA Autoscaling
+name: 3. 🌪️ Test HPA Autoscaling
 
 on:
   workflow_dispatch:

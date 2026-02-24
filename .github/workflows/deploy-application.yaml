@@ -1,4 +1,4 @@
-name: 🚀 Deploy Application
+name: 2. 🚀 Deploy Application
 run-name: 🚀 Deploy App | Branch:${{ github.ref_name }} | By @${{ github.actor }}
 
 on:

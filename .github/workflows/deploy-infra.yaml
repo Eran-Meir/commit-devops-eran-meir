@@ -1,4 +1,4 @@
-name: 🟢 Deploy Infrastructure
+name: 1. 🟢 Deploy Infrastructure
 
 on:
   workflow_dispatch:  # STRICTLY Manual. It will never run on its own
