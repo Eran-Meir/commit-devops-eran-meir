@@ -1,4 +1,22 @@
 # Secure Cross-Project GCP Architecture & GitOps Pipeline
+<div align="center">
+
+[![1. 🟢 Deploy Infrastructure](https://github.com/Eran-Meir/commit-devops-eran-meir/actions/workflows/deploy-infra.yaml/badge.svg)](https://github.com/Eran-Meir/commit-devops-eran-meir/actions/workflows/deploy-infra.yaml)
+[![2. 🚀 Deploy Application](https://github.com/Eran-Meir/commit-devops-eran-meir/actions/workflows/deploy-application.yaml/badge.svg)](https://github.com/Eran-Meir/commit-devops-eran-meir/actions/workflows/deploy-application.yaml)
+[![3. 🌪️ Test HPA Autoscaling](https://github.com/Eran-Meir/commit-devops-eran-meir/actions/workflows/test-autoscaling.yaml/badge.svg)](https://github.com/Eran-Meir/commit-devops-eran-meir/actions/workflows/test-autoscaling.yaml)
+[![4. 🔴 Destroy Infrastructure](https://github.com/Eran-Meir/commit-devops-eran-meir/actions/workflows/destroy-infra.yaml/badge.svg)](https://github.com/Eran-Meir/commit-devops-eran-meir/actions/workflows/destroy-infra.yaml)
+
+<br>
+
+![Google Cloud](https://img.shields.io/badge/GoogleCloud-%234285F4.svg?style=for-the-badge&logo=google-cloud&logoColor=white)
+![Terraform](https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white)
+![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white)
+
+</div>
 
 This repository provisions a highly secure, end-to-end encrypted infrastructure on Google Cloud Platform. It demonstrates advanced cross-project networking, zero-trust perimeter security, and a fully automated GitOps deployment lifecycle.
 
