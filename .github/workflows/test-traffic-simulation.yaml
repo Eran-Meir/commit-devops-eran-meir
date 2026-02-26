@@ -1,0 +1,63 @@
+name: 3. 🌪️ Traffic & Security Simulation
+
+on:
+  workflow_dispatch:
+    inputs:
+      duration:
+        description: 'Duration to run the traffic simulation (in seconds)'
+        required: true
+        default: '300'
+
+env:
+  TF_VERSION: 1.5.7
+
+jobs:
+  simulate-traffic:
+    name: Run Traffic Generators
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Initialize Terraform
+        working-directory: ./terraform/consumer
+        run: terraform init
+
+      - name: Execute Concurrent Traffic Simulation
+        working-directory: ./terraform/consumer
+        run: |
+          export INGRESS_IP=$(terraform output -raw app_external_ip)
+          DURATION=${{ github.event.inputs.duration }}
+          
+          echo "Targeting Global IP: $INGRESS_IP"
+          echo "Starting 4 concurrent traffic streams for $DURATION seconds..."
+
+          # 1. Baseline Traffic (200 OK every 2s)
+          timeout ${DURATION}s bash -c "while true; do curl -k -s https://$INGRESS_IP/ & sleep 2; done" || true &
+
+          # 2. HPA Sawtooth Pulse (200 OK every 180s)
+          timeout ${DURATION}s bash -c "while true; do curl -k -s https://$INGRESS_IP/hpa & sleep 180; done" || true &
+
+          # 3. SQLi Attack (403 Forbidden every 5s)
+          timeout ${DURATION}s bash -c "while true; do curl -k -s \"https://$INGRESS_IP/hpa?id=1%20OR%201=1\" & sleep 5; done" || true &
+
+          # 4. XSS Attack (403 Forbidden every 10s)
+          timeout ${DURATION}s bash -c "while true; do curl -k -s \"https://$INGRESS_IP/hpa?search=<script>alert('hack')</script>\" & sleep 10; done" || true &
+
+          echo "All streams are running in the background. Waiting for timeout..."
+          
+          # The 'wait' command ensures the GitHub runner doesn't exit until all background processes (&) are finished
+          wait
+          
+          echo "Traffic simulation complete! Check your GCP dashboards."
